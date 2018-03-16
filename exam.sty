@@ -1,0 +1,265 @@
+%%% exam.sty
+
+% for examinations at School of Computer Science,
+% University of Birmingham
+% Written by Mark Ryan, mdr@cs.bham.ac.uk
+% November 1998
+% Excerpt from University Guidelines:
+% (a) Precise dates are not entered on exam papers. Give only the
+%     broad date, eg, May/June 1999.
+% (b) Pages should not be stapled. Use a paperclip.
+% (c) Give full instructions to candidates
+
+\usepackage{ifthen}
+\usepackage{pdfpages}
+\usepackage{needspace}
+
+% \newcommand{\nextquestion}{\vskip 12cm plus 0cm minus 12cm \item}
+\newcommand{\nextquestion}{\Needspace{10\baselineskip}\item}
+
+\newcounter{totalmarkscounter}
+\newcounter{TheTotalMarks}
+\setcounter{TheTotalMarks}{100}
+
+\newcommand{\igbmarks}[1]{ %
+  \addtocounter{totalmarkscounter}{#1}
+  \ifthenelse{\equal{\arabic{TheTotalMarks}}{100}}{ %
+    \mbox{}\hspace*{\fill}\textbf{[#1\%]}}{ %
+    \mbox{}\hspace*{\fill}\textbf{[#1~marks]}}}
+
+\newcommand{\maketotalmarks}{ %
+  \ifthenelse{\equal{\arabic{TheTotalMarks}}{\arabic{totalmarkscounter}}}
+             {}
+             {{\bf Total Marks \arabic{totalmarkscounter} !=
+                 Expected \arabic{TheTotalMarks}}}}
+
+\newboolean{extended}
+\setboolean{extended}{false}
+\ifthenelse{\isundefined{\IsExtended}}{\setboolean{extended}{false}}{\setboolean{extended}{true}}
+
+\newboolean{answers}
+\setboolean{answers}{false}
+\ifthenelse{\isundefined{\DoAnswers}}{\setboolean{answers}{false}}{\setboolean{answers}{true}}         
+
+
+
+
+
+\newcommand{\markscheme}[1]{ %
+  \ifthenelse{\boolean{answers}}{{\bf #1}}{} %
+}
+\newcommand{\Answers}[1]{\markscheme{#1}}
+
+\newcommand{\achimrubric}{ %
+\ifthenelse{\equal{\arabic{TheTotalMarks}}{60}}{
+\subsection*{Note}
+
+Answer ALL questions (3 in total). Each question will be marked out of
+24. Up to 20 marks will be awarded for content, with up to 4 additional
+marks for the quality, coherence, and clarity of your answer. The
+examination will be marked out of 72, which will be rescaled to a mark
+out of 100.
+
+}{}
+}
+
+
+
+
+%%   % USAGE
+%%   % Copy this comment into your file, and remove the initial %% string.
+%%   % Replace the examination-specific parameters by appropriate
+%%   % values. Leave the setting of paper size and margins to the
+%%   % exam.sty file
+
+%% 
+%%   \documentclass[12pt]{article}
+%%   % PACKAGES
+%%   \usepackage{exam}           % needed for exam papers
+%%   % you can declare other \usepackage{...} here
+%%   %
+%%   % EXAM PARAMETERS
+%%   % Replace all the parameters below by appropriate values.
+%%   \ModuleName      {ModuleName?????}         % eg, Automatic Verification
+%%   \ACode           {ACode????}               % eg, A12345
+%%   \BannerCode      {BannerCode?????}         % eg, 06 02489
+%%   \Resit           {N}   % Y or N
+%%   \AnswerQuestions {Answer ?????? questions} % eg, Answer ALL questions
+%%   \Date            {Date?????}               % eg, January 1999
+%%                                              % give only the broad date
+%%   \Duration        {Duration?????}           % eg, 2 hours
+%%
+%%   %% Uncomment one only of the following pairs of calculator
+%%   %% declarations. Only the 4th one (specified calculator) can have
+%%   %% its text changed 
+%%
+%%   %\LongCalculator{No calculator permitted in this examination}
+%%   %\ShortCalculator{No calculator}
+%%   
+%%   %\LongCalculator{Calculators may be used in this examination provided
+%%   %  they are \underline{not capable} of being used to store alphabetical
+%%   %  information other than hexadecimal numbers}
+%%   %\ShortCalculator{Non-alpha only}
+%%   
+%%   \LongCalculator  {Calculators may be used in this examination but
+%%      must not be used to store text. Calculators with the ability to
+%%      store text should have their memories deleted prior to the start of
+%%      the examination.}
+%%   \ShortCalculator{Any Calculator}
+%%   
+%%   %\LongCalculator  {Calculators may be used as specified by the School as follows:}
+%%   %\ShortCalculator{Specified Calculator}
+%%   
+%%   \begin{document}
+%%   \begin{exam}
+%%   \begin{enumerate}
+%%   
+%%   \item Question 1
+%%   \item Question 2
+%%   \item Question 3
+%%   
+%%   \newpage
+%%   
+%%   \item Question 4
+%%   \item Question 5
+%%   \item Question 6
+%%   
+%%   \newpage
+%%   
+%%   \item Question 7
+%%   \item Question 8
+%%   \item Question 9
+%%   
+%%   \end{enumerate}
+%%   \end{exam}
+%%   \end{document}
+%%   % End of usage information   
+
+\renewcommand\familydefault\sfdefault
+%% exam.sty begins here
+\usepackage{fancyhdr}  % needed for exam papers
+\usepackage{graphicx}
+\graphicspath{{../include/}}
+
+% The following is to set up margins and paper size
+\usepackage{vmargin}
+\setpapersize{A4}
+%% the args to setmarginsrb are as follows (note that the distance from
+%% the top of the page to the first line of (non-header) text is
+%% topmargin+headheight+headsep:
+%% \setmarginsrb{leftmargin}{topmargin}{rightmargin}{bottommargin}%
+%%              {headheight}{headsep}{footheight}{footsep}
+ 
+\setmarginsrb{25.4mm}{25.4mm}{25.4mm}{25.4mm}%
+             {12pt}{12mm}{12pt}{5mm}
+ 
+
+% EXAM PARAMETERS
+\def\ModuleNumber#1    {\def\TheModuleNumber{#1}}
+\def\ModuleName#1      {\def\TheModuleName{#1}}
+\def\ACode#1           {\def\TheACode{#1}}
+\def\BannerCode#1      {\def\TheBannerCode{#1}}
+\def\Resit#1           {\def\TheResit{#1}}
+\def\AnswerQuestions#1 {\def\TheAnswerQuestions{#1}}
+\def\Date#1            {\def\TheDate{#1}}
+\def\Duration#1        {\def\TheDuration{#1}}
+\def\LongCalculator#1  {\def\TheLongCalculator{#1}}
+\def\ShortCalculator#1 {\def\TheShortCalculator{#1}}
+\def\Modules#1         {\def\TheModules{#1}}
+\def\ExtendedModules#1         {\def\TheExtendedModules{#1}}
+\def\TotalMarks#1      {\setcounter{TheTotalMarks}{#1}}
+
+
+% default values
+\ModuleNumber    {ModuleNumber????}
+\ModuleName      {ModuleName?????}
+\ACode           {UCode????}
+\BannerCode      {BannerCode?????}
+\Resit           {N}   % Y or N
+\AnswerQuestions {Answer ?????? questions}
+\Date            {Date?????}
+\Duration        {Duration?????}
+\Modules         {No modules specified??????}
+\ExtendedModules         {No extended modules specified??????}
+
+\LongCalculator{Long Calculator Declaration?????}
+\ShortCalculator{Short Calculator Declaration????}
+
+
+
+% HEADERS AND FOOTERS
+\pagestyle{fancy}
+\renewcommand{\headrule}{}
+
+\newcommand*\cleartobackpage{%
+  \clearpage
+  \lhead{}
+  \chead{This page left intentionally blank}
+  \rhead{}
+  \lfoot{}
+  \cfoot{This page left intentionally blank}
+  \rfoot{}
+  \ifodd\value{page}\hbox{}\newpage\fi
+  \cfoot{}
+  \chead{}
+}
+
+
+
+
+% the exam environment
+\newenvironment{exam}{
+  %% FRONT SHEET
+  %% set up headers and footers
+  \lhead{\textbf{\TheACode}}
+  \chead{}
+  \rhead{\parbox[t]{80mm}{\TheLongCalculator }}  
+  \lfoot{}
+  \rfoot{Turn Over}
+  \cfoot{-- \thepage\ --}
+  %% 
+  \vspace*{3cm}
+  \begin{center}
+    \includegraphics[width=8cm]{marque.pdf}\\[20mm]
+    \textbf{School of Computer Science}\\[20mm]
+    %% Degree Programme information
+    \begin{centering}
+      \ifthenelse{\boolean{extended}}{ %
+        \TheExtendedModules}{%
+        \TheModules}
+      
+    \end{centering}
+    \vspace*{5mm}
+    \textbf{\TheBannerCode}\\[2mm]
+    \textbf{\TheModuleName}\\[8mm]
+    \if\TheResit Y RESIT\\[2mm]\fi
+    \TheDate \\[4mm]
+    Time allowed: \TheDuration\\[4mm]
+    [\TheAnswerQuestions]
+  \end{center}
+  \newpage
+  \achimrubric
+  %% SECOND AND SUBSEQUENT PAGES
+  \lhead{}
+  \chead{}
+  \rhead{\parbox[t]{7cm}{\raggedleft \TheShortCalculator}}  
+  \lfoot{\TheACode}
+  \rfoot{Turn Over}
+  \cfoot{-- \thepage\ --}
+% end of \begin{exam}
+}{ % \end{exam}
+   % suppress final ``turn over''
+  \maketotalmarks
+  \rfoot{End of Paper}
+  \cleartobackpage
+  \lhead{\textbf{\TheACode}}
+  \chead{\textbf{\TheModuleName}}
+  \rhead{}
+  \lfoot{}
+  \cfoot{}
+  \rfoot{}
+  \includepdf[pagecommand={\thispagestyle{fancy}},offset=25.4mm -40mm]{BackPage.pdf}
+}
+
+
+%%%%%% end of exam.sty
