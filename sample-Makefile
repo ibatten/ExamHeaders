@@ -1,0 +1,84 @@
+# modify to specify the modules you are responsible for and their extended
+# versions (where relevant)
+
+MODULES=networks netsec ssm 
+EXTENDED=networks_extended netsec_extended
+
+# modify to say where the extra style, pdf and script files from
+# https://github.com/ibatten/ExamHeaders.git are
+
+INCLUDE=../include
+
+# shouldn't need to touch below here
+
+ALLMODULES=$(MODULES) $(EXTENDED)
+PAPERS=$(ALLMODULES) $(ALLMODULES:=_resit)
+
+ANSWERS=$(MODULES:=.answers) $(MODULES:=_resit.answers)
+
+PDFS=$(PAPERS:=.pdf) $(ANSWERS:=.pdf)
+
+STY=exam.sty
+
+MAKECODES=${INCLUDE}/make_codes.sh
+
+CODEFILE=${INCLUDE}/main_codes.csv
+CODEDB=codes.db
+
+MAKEDB=${INCLUDE}/parse.sh
+
+EXAMTITLES=exam_titles
+
+CODES=$(MODULES:=_codes.tex)
+MODIFIED_SRC=$(EXTENDED:=.tex) $(EXTENDED:=_resit.tex) $(ANSWERS:=.tex)
+
+FRONTMATTER=$(MODULES:=_frontmatter.tex)
+INSERTS=${INCLUDE}/marque.pdf ${INCLUDE}/BackPage.pdf
+
+# so changes to any frontmatter will rebuild all exams.  This is hardly
+# a problem in 2018, and not worth the complication of putting
+# %_frontmatter.tex all over the place.
+
+# Oh, and _extended.tex (etc) rebuilds when .tex changes, even though
+# the contents aren't actually dependent on it.  But that makes sure
+# that the associated _extended.pdf is rebuilt, which _does_ depend on
+# the contents.  The alternative it "echo \def...; cat $<" which
+# wastes space but would be a bit clearer.
+
+INCLUDES=$(CODES) $(FRONTMATTER) $(INSERTS) $(STY)
+
+all: $(PDFS)
+
+codes: $(CODES)
+frontmatter: $(FRONTMATTER)
+inserts: $(INSERTS)
+sty: $(STY)
+
+
+${STY}: ${INCLUDE}/${STY}
+	[ readlink $@ = $< ] || ln -s $<
+
+
+${CODEDB}: ${CODEFILE}
+	${MAKEDB} ${CODEFILE} ${CODEDB}
+
+%_codes.tex: ${CODEDB} ${MAKECODES} ${EXAMTITLES}
+	${MAKECODES} ${@:_codes.tex=} ${EXAMTITLES} ${CODEDB} > $@
+
+%.answers.tex: %.tex 
+	echo '\def\DoAnswers{Yes}\input{$<}' > $@
+
+%_extended.tex: %.tex
+	echo '\def\IsExtended{Yes}\input{$<}' > $@
+
+%_extended_resit.tex: %_resit.tex
+	echo '\def\IsExtended{Yes}\input{$<}' > $@
+
+%.pdf: %.tex $(INCLUDES)
+	xelatex $<
+
+.PRECIOUS: ${CODES} ${MODIFIED_SRC}
+
+clean:
+	rm -f $(PDFS) *.log *.aux *~ ${CODES} ${MODIFIED_SRC} ${CODEDB}
+
