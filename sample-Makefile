@@ -35,6 +35,9 @@ MODIFIED_SRC=$(EXTENDED:=.tex) $(EXTENDED:=_resit.tex) $(ANSWERS:=.tex)
 FRONTMATTER=$(MODULES:=_frontmatter.tex)
 INSERTS=${INCLUDE}/marque.pdf ${INCLUDE}/BackPage.pdf
 
+PRINT=../include/make_printable.sh
+
+
 # so changes to any frontmatter will rebuild all exams.  This is hardly
 # a problem in 2018, and not worth the complication of putting
 # %_frontmatter.tex all over the place.
@@ -56,7 +59,7 @@ sty: $(STY)
 
 
 ${STY}: ${INCLUDE}/${STY}
-	[ readlink $@ = $< ] || ln -s $<
+	[ `readlink $@` = $< ] || ln -s $<
 
 
 ${CODEDB}: ${CODEFILE}
@@ -82,3 +85,5 @@ ${CODEDB}: ${CODEFILE}
 clean:
 	rm -f $(PDFS) *.log *.aux *~ ${CODES} ${MODIFIED_SRC} ${CODEDB}
 
+print: ${PDFS} ${CODEDB} ${EXAMTITLES}
+	${PRINT} ${CODEDB} ${EXAMTITLES} | ${SHELL} -x
